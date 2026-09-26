@@ -1,3 +1,11 @@
+<?php
+include 'conexion.php';
+
+// Consultar los documentos cargados en la base de datos
+$sql_docs = "SELECT * FROM documentos ORDER BY fecha_subida DESC";
+$resultado_docs = $conexion->query($sql_docs);
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -204,17 +212,45 @@
                     </div>
 
                     <!-- Estatus de Proyectos -->
-                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex flex-col">
-                        <h3 class="font-bold text-slate-800 mb-4">Estatus de Residencias</h3>
-                        <div class="space-y-4 flex-1 flex flex-col justify-center">
-                            <!-- Estatus Registrado -->
-                            <div>
-                                <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
-                                    <span>Registrado / Propuesta</span>
-                                    <span id="badge-count-registrado" class="font-bold">0</span>
-                                </div>
-                                <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                    <div id="progress-registrado" class="bg-sky-400 h-full transition-all duration-500" style="width: 0%"></div>
+                            <!-- Tarjeta de Documentos del Expediente en el Panel de Control -->
+                            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col">
+                                <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                                    <i data-lucide="folder-down" class="w-5 h-5 text-blue-600"></i>
+                                    Documentos del Expediente
+                                </h3>
+
+                                <div class="space-y-3 overflow-y-auto max-h-[320px] pr-1">
+                                    <?php if ($resultado_docs && $resultado_docs->num_rows > 0): ?>
+                                        <?php while ($doc = $resultado_docs->fetch_assoc()): ?>
+                                            <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-between gap-2 hover:border-slate-300 transition-colors">
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="font-semibold text-slate-800 text-xs truncate">
+                                                        <?php echo htmlspecialchars($doc['tipo_documento']); ?>
+                                                    </p>
+                                                    <p class="text-[11px] text-slate-500 truncate" title="<?php echo htmlspecialchars($doc['nombre_archivo']); ?>">
+                                                        <?php echo htmlspecialchars($doc['nombre_archivo']); ?>
+                                                    </p>
+                            </div>
+
+                                                <!-- Botones de Ver y Descargar -->
+                            <div class="flex items-center gap-1 shrink-0">
+                            <!-- Botón Ver (Ojo) -->
+<a href="<?php echo $doc['ruta_archivo']; ?>" target="_blank" title="Ver documento" class="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
+    <i data-lucide="eye" class="w-4 h-4"></i>
+</a>
+<!-- Botón Descargar (Flecha) -->
+<a href="/proyresid/<?php echo rawurlencode($doc['ruta_archivo']); ?>" download="<?php echo htmlspecialchars($doc['nombre_archivo']); ?>" title="Descargar archivo" class="p-1.5 text-slate-600 hover:text-green-600 hover:bg-green-100 rounded-md transition-colors">
+    <i data-lucide="download" class="w-4 h-4"></i>
+</a>
+                                                </div>
+                                            </div>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <div class="text-center py-8 text-slate-400">
+                                            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
+                                            <p class="text-xs">No hay documentos cargados.</p>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <!-- Estatus En Curso -->
@@ -1620,6 +1656,12 @@
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
             );
         }
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+    lucide.createIcons();
+    </script>
+
     </script>
 </body>
 </html>

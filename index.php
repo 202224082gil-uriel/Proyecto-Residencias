@@ -1,7 +1,7 @@
 <?php
 include 'conexion.php';
 
-// Consultar los documentos cargados en la base de datos
+// Consultar los documentos cargados en MySQL
 $sql_docs = "SELECT * FROM documentos ORDER BY fecha_subida DESC";
 $resultado_docs = $conexion->query($sql_docs);
 ?>
@@ -18,7 +18,7 @@ $resultado_docs = $conexion->query($sql_docs);
 
     <div class="flex h-screen overflow-hidden">
         
-        <!-- Sidebar Azul Izquierdo -->
+        <!-- Sidebar Izquierdo -->
         <aside class="w-64 bg-slate-900 text-white flex flex-col justify-between p-4 shrink-0">
             <div>
                 <div class="flex items-center gap-3 px-2 py-4 mb-6 border-b border-slate-800">
@@ -30,7 +30,7 @@ $resultado_docs = $conexion->query($sql_docs);
                 </div>
 
                 <nav class="space-y-1">
-                    <a href="#" class="flex items-center gap-3 px-3 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium">
+                    <a href="index.php" class="flex items-center gap-3 px-3 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Panel de Control
                     </a>
                     <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg text-sm font-medium transition-colors">
@@ -57,11 +57,10 @@ $resultado_docs = $conexion->query($sql_docs);
         <!-- Contenido Principal -->
         <main class="flex-1 overflow-y-auto p-8">
             
-            <!-- Encabezado -->
             <div class="flex justify-between items-center mb-8">
                 <div>
                     <h2 class="text-2xl font-bold text-slate-800">Panel de Control</h2>
-                    <p class="text-slate-500 text-sm">Métricas generales de las residencias profesionales actuales.</p>
+                    <p class="text-slate-500 text-sm">Métricas generales y gestión del expediente de residencias.</p>
                 </div>
                 <span class="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 flex items-center gap-2 shadow-sm">
                     <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Periodo: Ene - Jun 2026
@@ -100,10 +99,10 @@ $resultado_docs = $conexion->query($sql_docs);
                 </div>
             </div>
 
-            <!-- Panel Central con Formulario y Botones de Descarga -->
+            <!-- Panel Central -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Expediente Oficial y Formulario de Carga -->
+                <!-- Datos del Estudiante y Carga Rápida -->
                 <div class="lg:col-span-2 bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-4">
@@ -123,18 +122,18 @@ $resultado_docs = $conexion->query($sql_docs);
                         </div>
                     </div>
 
-                    <!-- Módulo para Subir Archivos -->
+                    <!-- Módulo Formulario Subir -->
                     <div class="pt-4 border-t border-slate-100">
                         <p class="text-xs font-semibold text-slate-500 uppercase mb-2">Subir Documento al Expediente</p>
                         <form action="subir.php" method="POST" enctype="multipart/form-data" class="flex flex-wrap gap-2 items-center">
-                            <select name="tipo_documento" required class="text-xs border border-slate-300 rounded-lg p-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <select name="tipo_documento" required class="text-xs border border-slate-300 rounded-lg p-2 bg-slate-50">
                                 <option value="Solicitud">Solicitud de Residencia</option>
                                 <option value="Anteproyecto">Anteproyecto</option>
                                 <option value="Anexo XXIX">Anexo XXIX</option>
                                 <option value="Anexo XXX">Anexo XXX</option>
                                 <option value="Carta Liberación">Carta de Liberación</option>
                             </select>
-                            <input type="file" name="archivo" required class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                            <input type="file" name="archivo" required class="text-xs text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ml-auto">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i> Subir
                             </button>
@@ -142,7 +141,7 @@ $resultado_docs = $conexion->query($sql_docs);
                     </div>
                 </div>
 
-                <!-- Lista de Documentos y Botones de Ver / Descargar -->
+                <!-- Tarjeta Dinámica con Botones Ver y Descargar -->
                 <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col">
                     <h3 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
                         <i data-lucide="folder-down" class="w-5 h-5 text-blue-600"></i>
@@ -150,7 +149,7 @@ $resultado_docs = $conexion->query($sql_docs);
                     </h3>
 
                     <div class="space-y-3 overflow-y-auto max-h-[320px] pr-1">
-                        <?php if ($resultado_docs && $resultado_docs->num_rows > 0): ?>
+                        <?php if (isset($resultado_docs) && $resultado_docs && $resultado_docs->num_rows > 0): ?>
                             <?php while ($doc = $resultado_docs->fetch_assoc()): ?>
                                 <div class="p-3 bg-slate-50 rounded-lg border border-slate-100 flex items-center justify-between gap-2 hover:border-slate-300 transition-colors">
                                     <div class="min-w-0 flex-1">
@@ -162,12 +161,12 @@ $resultado_docs = $conexion->query($sql_docs);
                                         </p>
                                     </div>
 
-                                    <!-- Botones Ver (ojo) y Descargar (flecha) -->
+                                    <!-- Botones Dinámicos de Ver y Descargar -->
                                     <div class="flex items-center gap-1 shrink-0">
-                                        <a href="<?php echo $doc['ruta_archivo']; ?>" target="_blank" title="Ver documento" class="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
+                                        <a href="/proyresid/<?php echo $doc['ruta_archivo']; ?>" target="_blank" title="Ver documento" class="p-1.5 text-slate-600 hover:text-blue-600 hover:bg-blue-100 rounded-md transition-colors">
                                             <i data-lucide="eye" class="w-4 h-4"></i>
                                         </a>
-                                        <a href="<?php echo $doc['ruta_archivo']; ?>" download="<?php echo htmlspecialchars($doc['nombre_archivo']); ?>" title="Descargar archivo" class="p-1.5 text-slate-600 hover:text-green-600 hover:bg-green-100 rounded-md transition-colors">
+                                        <a href="/proyresid/<?php echo $doc['ruta_archivo']; ?>" download="<?php echo htmlspecialchars($doc['nombre_archivo']); ?>" title="Descargar archivo" class="p-1.5 text-slate-600 hover:text-green-600 hover:bg-green-100 rounded-md transition-colors">
                                             <i data-lucide="download" class="w-4 h-4"></i>
                                         </a>
                                     </div>
@@ -177,7 +176,6 @@ $resultado_docs = $conexion->query($sql_docs);
                             <div class="text-center py-8 text-slate-400">
                                 <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 text-slate-300"></i>
                                 <p class="text-xs">No hay documentos subidos aún.</p>
-                                <p class="text-[10px] text-slate-400 mt-1">Usa el botón "Subir" a la izquierda para agregar uno.</p>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -188,7 +186,6 @@ $resultado_docs = $conexion->query($sql_docs);
         </main>
     </div>
 
-    <!-- Inicializar los iconos de Lucide -->
     <script>
         lucide.createIcons();
     </script>
