@@ -1,0 +1,16 @@
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Configuración local
+.env
+*.log
+
+# Carpetas de dependencias
+node_modules/
+vendor/
+
+# Archivos subidos por usuarios (si son muy pesados)
+# uploads/*
+# !uploads/.gitkeep
